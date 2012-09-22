@@ -1,0 +1,9 @@
+*.pyc
+*.pyo
+*.log
+*.dat
+*.swp
+__pycache__/
+build/
+dist/
+testreportrepository/
