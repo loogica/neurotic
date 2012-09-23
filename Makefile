@@ -6,6 +6,7 @@ coverage:
 
 clean:
 	rm -rf build/
+	rm -rf build_history/
 	rm -rf dist/
 	rm -rf *egg-info/
 	find . -name '__pycache__' -exec rm -rf {} ';'
