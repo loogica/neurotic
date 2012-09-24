@@ -17,6 +17,19 @@ $ pip install -r requirements.txt
 
 ## Filosophy
 
+## File Monitor
+
+For testing purposes, neurotic will monitor file changes insidte ``tests``
+directory, like ``test_report_plugin``. When you modify this file or
+any other file insite ``tests`` dir neurotic will run silenly your test
+suite (nowdays it'll run it's own tests using ``make test``)
+
+To start neurotic file monitor just:
+
+```sh
+$ neurotic monitor
+```
+
 ### Test Report Collector
 
 neurotic is a pytest plugin that collects reports and save them to posteriour

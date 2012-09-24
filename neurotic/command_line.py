@@ -13,7 +13,6 @@ def main():
     if len(sys.argv) == 1:
         console_history()
     else:
-        import pdb; pdb.set_trace()
         function = getattr(mod, sys.argv[1])(*sys.argv[2:])
 
 def web():
@@ -22,3 +21,7 @@ def web():
 
 def console_history():
     repository.show_history()
+
+def monitor():
+    from neurotic.file_monitor import start_monitor
+    start_monitor()
