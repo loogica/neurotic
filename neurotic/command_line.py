@@ -11,7 +11,7 @@ def main():
     print("Searching build history on %s" % (os.getcwd()))
     mod = __import__(__name__).command_line
     if len(sys.argv) == 1:
-        console_history()
+        show_last_run()
     else:
         function = getattr(mod, sys.argv[1])(*sys.argv[2:])
 
@@ -21,6 +21,18 @@ def web():
 
 def console_history():
     repository.show_history()
+
+def last_fails():
+    for failed in repository.last_run_failed_tests():
+        print(failed)
+
+def show_last_run():
+    for report in repository.last_run_report_type():
+        if report['outcome'] == "failed":
+            print("FAILED - %s" % (report['nodeid']))
+        else:
+            print("SUCCESS - %s" % (report['nodeid']))
+
 
 def monitor():
     from neurotic.file_monitor import start_monitor
