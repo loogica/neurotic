@@ -4,7 +4,6 @@ import json
 import jsonpickle
 
 from coopy.base import init_persistent_system
-from jsonpickle.util import is_object, is_dictionary
 
 from copy import deepcopy
 
