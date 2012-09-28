@@ -44,61 +44,24 @@ For instance, run neurotic tests:
 $ py.test -v .
 ```
 
-Open a flask web-app [http://localhost:5000] exposing report data as JSON:
-```sh
-$ neurotic web
-```
-
-You can also, list test data, on console:
+Ant then.. last run test reports, on console:
 
 ```
 $ neurotic
-{
-    "longrepr": {
-        "sections": [], 
-        "reprcrash": {
-            "path": "/Users/felipecruz/Projects/loogica/neurotic/tests/test_report_plugin.py", 
-            "message": "assert 1 == [1, 2]", 
-            "lineno": 5
-        }, 
-        "reprtraceback": {
-            "reprentries": [
-                {
-                    "reprfuncargs": {
-                        "args": []
-                    }, 
-                    "reprlocals": null, 
-                    "lines": [
-                        "    def test_pytest_report_teststatus_error():", 
-                        ">       assert 1 ==[1, 2]", 
-                        "E       assert 1 == [1, 2]"
-                    ], 
-                    "reprfileloc": {
-                        "path": "tests/test_report_plugin.py", 
-                        "message": "AssertionError", 
-                        "lineno": 5
-                    }, 
-                    "short": false
-                }
-            ], 
-            "style": "long", 
-            "extraline": null
-        }
-    }, 
-    "when": "call", 
-    "nodeid": "tests/test_report_plugin.py::test_pytest_report_teststatus_error", 
-    "duration": 0.0005729198455810547, 
-    "location": [
-        "tests/test_report_plugin.py", 
-        3, 
-        "test_pytest_report_teststatus_error"
-    ], 
-    "keywords": {
-        "test_pytest_report_teststatus_error": 1
-    }, 
-    "outcome": "failed", 
-    "sections": []
-}
+SUCCESS - tests/test_domain.py::test_test_report_repository
+SUCCESS - tests/test_domain.py::test_test_report_start_run
+SUCCESS - tests/test_domain.py::test_test_report_repository_add_report
+SUCCESS - tests/test_domain.py::test_test_report_show_failed_tests
+SUCCESS - tests/test_domain.py::test_test_report_last_run_failed_tests
+SUCCESS - tests/test_report_plugin.py::test_pytest_report_teststatus
+SUCCESS - tests/test_report_plugin.py::test_pytest_report_teststatus_error
+```
+
+### HTTP API to expore tests reports and runs
+
+Open a flask web-app [http://localhost:5000] exposing report data as JSON:
+```sh
+$ neurotic web
 ```
 
 ## Contact
