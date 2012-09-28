@@ -34,9 +34,15 @@ class NeuroticReporter(object):
         self.config = config
 
     def pytest_report_teststatus(self, report):
-        report_copy = deepcopy(report)
         if report.when == "call":
+            report_copy = deepcopy(report)
             repository.add_report(todict(report_copy))
+
+    def pytest_report_header(config):
+        repository.start_run()
+
+    def pytest_terminal_summary(reporter):
+        repository.finish_run()
 
 repository = init_persistent_system(TestReportRepository,
                                     basedir="build_history")
