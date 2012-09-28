@@ -1,7 +1,6 @@
 import pytest
 import urllib2
 import json
-import jsonpickle
 
 from coopy.base import init_persistent_system
 
@@ -11,6 +10,13 @@ from .domain import TestReportRepository
 
 def pytest_configure(config):
     config.pluginmanager.register(NeuroticReporter(config))
+
+#def pytest_addoption(parser):
+#    group = parser.getgroup("terminal reporting")
+#    parser.add_option('-nc', '--nocollect',
+#                      action="store",
+#                      dest="collect",
+#                      help="Disable test report collector")
 
 def todict(obj, classkey=None):
     if isinstance(obj, dict):
