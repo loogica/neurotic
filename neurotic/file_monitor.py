@@ -1,6 +1,10 @@
+# coding: utf-8
+
 import os
 import time
 import select
+import subprocess
+import glob
 
 from select import kqueue, kevent
 
@@ -15,7 +19,14 @@ def check_modifications(dirpath):
     local_scan_dict = {}
     global last_scan_dict
 
-    entries = (os.path.join(dirpath, fn) for fn in os.listdir(dirpath))
+    entries = glob.glob(os.path.join(dirpath, "*.py"))
+
+    for dirname, dirnames, filenames in os.walk(dirpath):
+        for subdirname in dirnames:
+            files = glob.glob(os.path.join(os.path.abspath(subdirname), '*.py'))
+            if files:
+                entries.extend(files)
+
     entries = ((time.ctime(os.stat(path).st_mtime), path)
                 for path in entries if os.path.isfile(path))
 
@@ -28,21 +39,27 @@ def check_modifications(dirpath):
 
     return modifications
 
-def start_monitor():
+def start_monitor(dirs):
     files_stats = []
-    current_dir = os.getcwd() + '/tests/'
+    current_dir = os.getcwd()
 
-    print('Watching %s dir' % (current_dir))
+    print('Watching %s dir' % (dirs))
 
-    fd = os.open(current_dir, os.O_RDONLY)
     kq = kqueue()
 
-    event = kevent(fd, filter=select.KQ_FILTER_VNODE,
-                       flags=select.KQ_EV_ADD | select.KQ_EV_CLEAR,
-                       fflags=select.KQ_NOTE_WRITE)
+    source_events = []
+    for dir_name in dirs:
+        dir_path = current_dir + '/' + dir_name
+        print("Monitoring %s" % (dir_path))
+        fd = os.open(dir_path, os.O_RDONLY)
+        event = kevent(fd, filter=select.KQ_FILTER_VNODE,
+                        flags=select.KQ_EV_ADD | select.KQ_EV_CLEAR,
+                        fflags=select.KQ_NOTE_WRITE)
+        source_events.append(event)
+    print source_events
 
     while True:
-        events = kq.control([event], 1, 2000)
+        events = kq.control(source_events,  len(source_events), 2000)
         for event in events:
             if event.fflags & select.KQ_NOTE_WRITE:
                 if check_modifications(current_dir):
@@ -50,3 +67,5 @@ def start_monitor():
                         async_test(["make", "test"])
                     except:
                         pass
+                    os.system('clear')
+                    subprocess.Popen("neurotic")

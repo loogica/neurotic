@@ -14,7 +14,7 @@ def main():
     if len(sys.argv) == 1:
         show_last_run()
     else:
-        function = getattr(mod, sys.argv[1])(*sys.argv[2:])
+        function = getattr(mod, sys.argv[1])(sys.argv[2:])
 
 def web():
     from neurotic.wsgi_app import app
@@ -37,6 +37,6 @@ def show_last_run():
                               report['nodeid']))
 
 
-def monitor():
+def monitor(paths):
     from neurotic.file_monitor import start_monitor
-    start_monitor()
+    start_monitor(paths)
