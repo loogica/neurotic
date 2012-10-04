@@ -2,6 +2,7 @@ import os
 import sys
 
 from neurotic.domain import TestReportRepository
+from neurotic.utils import color, OK, ERROR
 from coopy.base import init_persistent_system
 
 repository = init_persistent_system(TestReportRepository,
@@ -29,9 +30,11 @@ def last_fails():
 def show_last_run():
     for report in repository.last_run_report_type():
         if report['outcome'] == "failed":
-            print("FAILED - %s" % (report['nodeid']))
+            print("%s - %s" % (color(ERROR, color="red"),
+                                   report['nodeid']))
         else:
-            print("SUCCESS - %s" % (report['nodeid']))
+            print("%s- %s" % (color(OK, color="green"),
+                              report['nodeid']))
 
 
 def monitor():
