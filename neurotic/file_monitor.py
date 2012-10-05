@@ -43,20 +43,16 @@ def start_monitor(dirs):
     files_stats = []
     current_dir = os.getcwd()
 
-    print('Watching %s dir' % (dirs))
-
     kq = kqueue()
 
     source_events = []
     for dir_name in dirs:
         dir_path = current_dir + '/' + dir_name
-        print("Monitoring %s" % (dir_path))
         fd = os.open(dir_path, os.O_RDONLY)
         event = kevent(fd, filter=select.KQ_FILTER_VNODE,
                         flags=select.KQ_EV_ADD | select.KQ_EV_CLEAR,
                         fflags=select.KQ_NOTE_WRITE)
         source_events.append(event)
-    print source_events
 
     while True:
         events = kq.control(source_events,  len(source_events), 2000)
