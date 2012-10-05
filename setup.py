@@ -12,7 +12,7 @@ setuptools.setup(name='neurotic',
                  entry_points={
                      'pytest11': ['neurotic = neurotic.report_plugin'],
                      'console_scripts': [
-                        'neurotic = neurotic.command_line:main',
+                         'neurotic = neurotic.command_line:main',
                       ]
                  },
                  license='MIT License',
