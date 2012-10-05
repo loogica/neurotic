@@ -31,12 +31,20 @@ class TestReportRepository(object):
 
     @readonly
     def last_run_report_type(self, outcome_type="all"):
+        from collections import defaultdict
+        reports = defaultdict(list)
+
         for report in self.current_report()['reports']:
-            if outcome_type == "all":
-                yield report
-            else:
-                if report['outcome'] == outcome_type:
+            reports[report['location'][0]].append(report)
+
+        for location, reports in reports.items():
+            print "\n    " + location + "\n"
+            for report in reports:
+                if outcome_type == "all":
                     yield report
+                else:
+                    if report['outcome'] == outcome_type:
+                        yield report
 
     def last_run_failed_tests(self):
         return self.last_run_report_type(outcome_type="failed")
