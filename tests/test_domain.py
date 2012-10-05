@@ -48,25 +48,29 @@ def test_test_report_show_failed_tests():
 
 def test_test_report_last_run_failed_tests():
     repository = TestReportRepository()
+
     repository.start_run()
-    repository.add_report({'outcome': 'failed'}) #opaque report
-    repository.add_report({'outcome': 'passed'}) #opaque report
-    repository.add_report({'outcome': 'failed'}) #opaque report
+    repository.add_report({'outcome': 'failed', 'location': ['group']})
+    repository.add_report({'outcome': 'passed', 'location': ['group']})
+    repository.add_report({'outcome': 'failed', 'location': ['group']})
 
     assert list(repository.failed_tests()) == [{'id' : 1,
-                                                'outcome': 'failed'},
+                                                'outcome': 'failed',
+                                                'location': ['group']},
                                                {'id': 3,
-                                                'outcome': 'failed'}]
+                                                'outcome': 'failed',
+                                                'location': ['group']}]
 
     # dummy finish
     repository.finish_run()
     assert repository.run_counter == 1
 
     repository.start_run()
-    repository.add_report({'outcome': 'failed'}) #opaque report
-    repository.add_report({'outcome': 'passed'}) #opaque report
+    repository.add_report({'outcome': 'failed', 'location': ['group']}) #opaque report
+    repository.add_report({'outcome': 'passed', 'location': ['group']}) #opaque report
 
     assert list(repository.last_run_failed_tests()) == [{'id' : 4,
+                                                         'location': ['group'],
                                                          'outcome': 'failed'}]
 
     # dummy finish
