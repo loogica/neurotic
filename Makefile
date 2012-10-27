@@ -4,6 +4,12 @@ test:
 coverage:
 	py.test --cov-report html --cov .
 
+full:
+	make clean
+	python setup.py install
+	py.test -v .
+	neurotic
+
 clean:
 	@rm -rf build/
 	@rm -rf build_history/
