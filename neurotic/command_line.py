@@ -29,8 +29,12 @@ def last_fails(paths):
 def show_last_run():
     for report in repository.last_run_report_type():
         if report['outcome'] == "failed":
-            print("%s %s" % (color(ERROR, color="red"),
-                                   report['nodeid']))
+            print("%s %s\n" % (color(ERROR, color="red"),
+                                     report['nodeid']))
+            errors = report['longrepr']['reprtraceback']['reprentries']
+            for error in errors:
+                for line in error['lines']:
+                    print("%s" % line)
         else:
             print("%s %s" % (color(OK, color="green"),
                               report['nodeid']))
