@@ -11,6 +11,9 @@ setuptools.setup(name='neurotic',
                  install_requires=['pytest>=2.2.3'],
                  entry_points={
                      'pytest11': ['neurotic = neurotic.report_plugin'],
+                     'nose.plugins.0.10' : [
+                         'neurotic = neurotic.report_plugin:NeuroticNosePlugin'
+                      ],
                      'console_scripts': [
                          'neurotic = neurotic.command_line:main',
                       ]
