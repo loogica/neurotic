@@ -1,22 +1,26 @@
+import os
 import pytest
 import urllib2
 import json
+import logging
 
-from coopy.base import init_persistent_system
+try:
+    nose_present = True
+    from nose.plugins.base import Plugin
+except:
+    nose_present = False
 
 from copy import deepcopy
 
+from coopy.base import init_persistent_system
+
 from .domain import TestReportRepository
+
+repository = init_persistent_system(TestReportRepository,
+                                    basedir="build_history")
 
 def pytest_configure(config):
     config.pluginmanager.register(NeuroticReporter(config))
-
-#def pytest_addoption(parser):
-#    group = parser.getgroup("terminal reporting")
-#    parser.add_option('-nc', '--nocollect',
-#                      action="store",
-#                      dest="collect",
-#                      help="Disable test report collector")
 
 def todict(obj, classkey=None):
     if isinstance(obj, dict):
@@ -50,5 +54,132 @@ class NeuroticReporter(object):
     def pytest_terminal_summary(reporter):
         repository.finish_run()
 
-repository = init_persistent_system(TestReportRepository,
-                                    basedir="build_history")
+if nose_present:
+    import traceback
+    from nose.case import FunctionTestCase, MethodTestCase
+
+    class NeuroticNosePlugin(Plugin):
+        name = "neurotic"
+        enabled = True
+        score = 9
+
+        def __init__(self):
+            super(NeuroticNosePlugin, self).__init__()
+            self.reports = []
+            self.current_context = None
+            self.current_test = None
+            self.current_file = None
+            self.current_path = None
+
+        def _extract_test_info(self, test):
+            id = test.id()
+            test_type = None
+            test_name = id
+            test_class_name = None
+            test_method_name = None
+
+            if isinstance(test.test, FunctionTestCase):
+                test_name = test_name.split('.')[-1:][0]
+                test_type = FunctionTestCase
+                return (test_type, test_name, None, None)
+            elif isinstance(test.test, MethodTestCase):
+                test_class_name = test_name.split('.')[-2:-1][0]
+                test_method_name = test_name.split('.')[-1:][0]
+                test_name = '.'.join(test_name.split('.')[-2:])
+                test_type = MethodTestCase
+                return (test_type, test_name, test_class_name,
+                                              test_method_name)
+
+            raise Exception("Unkown Test Type")
+
+        def _crete_base_report_info(self, test):
+            test_info = self._extract_test_info(test)
+            base_report = {
+                'nodeid': str(test.id()),
+                'location': [self.current_file, 0, test_info[1]],
+                'keywords': '',
+                'id': len(self.reports) + 1
+            }
+            return base_report
+
+        def _extract_error_report(self, err):
+            exctype, value, tb = err
+
+            tb_info = traceback.extract_tb(tb)[2]
+            tb_report = {
+                'path':  str(tb_info[0]),
+                'test_name': str(tb_info[2]),
+                'lineno': str(tb_info[1]),
+                'message': str(tb_info[3])
+            }
+
+            return dict(reprcrash=tb_report)
+
+        def addSuccess(self, test):
+            report = self._crete_base_report_info(test)
+            report['outcome'] = 'passed'
+
+            self.reports.append(report)
+
+        def addError(self, test, err):
+            report = self._crete_base_report_info(test)
+            report['outcome'] = 'error'
+
+            err_info = self._extract_error_report(err)
+            report['longrepr'] = err_info
+
+            self.reports.append(report)
+
+        def addFailure(self, test, err):
+            report = self._crete_base_report_info(test)
+            report['outcome'] = 'failed'
+
+            err_info = self._extract_error_report(err)
+            report['longrepr'] = err_info
+
+            self.reports.append(report)
+
+        def finalize(self, result):
+            tests_number = result.testsRun
+
+            if not result.wasSuccessful():
+                pass
+            else:
+                pass
+
+            for report in self.reports:
+                self.stream.writeln(json.dumps(report, indent=4))
+
+        def setOutputStream(self, stream):
+            self.stream = stream
+            class dummy:
+                def write(self, *arg):
+                    pass
+                def writeln(self, *arg):
+                    pass
+                def flush(self, *args):
+                    pass
+            d = dummy()
+            return d
+
+        def startContext(self, ctx):
+            try:
+                n = ctx.__name__
+            except AttributeError:
+                n = str(ctx).replace('<', '').replace('>', '')
+                self.current_context = str(ctx)
+            try:
+                self.current_file = str(ctx.__file__).replace('.pyc', '.py')
+                self.current_path = os.getcwd() + '/'
+                self.current_file = self.current_file.replace(self.current_path, '')
+            except AttributeError:
+                pass
+
+        def stopContext(self, ctx):
+            self.current_context = None
+
+        def startTest(self, test):
+           self.current_test = test
+
+        def stopTest(self, test):
+            self.current_test = None
