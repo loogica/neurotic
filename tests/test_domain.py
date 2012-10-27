@@ -1,6 +1,6 @@
 from neurotic.domain import TestReportRepository
 
-def test_test_report_repository():
+def test_test_report_repository__init():
     repository = TestReportRepository()
 
     assert repository.reports == []
