@@ -39,6 +39,9 @@ def show_last_run():
             print("%s %s" % (color(OK, color="green"),
                               report['nodeid']))
 
+def list_tests(paths):
+    from neurotic.integration import build_suite
+    build_suite(paths)
 
 def monitor(paths):
     from neurotic.file_monitor import start_monitor
