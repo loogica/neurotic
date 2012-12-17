@@ -8,39 +8,10 @@ import glob
 
 from select import kqueue, kevent
 
-from coopy.base import init_persistent_system
-
 from neurotic.async_runner import async_test, NeuroticError
+from neurotic.file_monitor import check_modifications
 
-last_scan_dict = {}
 LIMIT = 1
-
-def check_modifications(dirpath, paths):
-    modifications = False
-    local_scan_dict = {}
-    global last_scan_dict
-
-    entries = glob.glob(os.path.join(dirpath, "*.py"))
-
-    for dirname, dirnames, filenames in os.walk(dirpath):
-        if dirname in paths:
-            files = glob.glob(os.path.join(os.path.abspath(dirname), '*.py'))
-            if files:
-                entries.extend(files)
-
-    entries = ((time.ctime(os.stat(path).st_mtime), path)
-                for path in entries if os.path.isfile(path))
-
-    entries = set(entries)
-
-    for cdate, path in sorted(entries):
-        local_scan_dict[os.path.basename(path)] = cdate
-
-    if not local_scan_dict == last_scan_dict:
-        last_scan_dict = local_scan_dict
-        modifications = True
-
-    return modifications
 
 def start_monitor(dirs):
     last_run = time.time()
