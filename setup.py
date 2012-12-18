@@ -7,7 +7,7 @@ setuptools.setup(name='neurotic',
                  author='',
                  author_email='',
                  url='',
-                 packages=['neurotic'],
+                 packages=['neurotic', 'neurotic/file_monitor'],
                  install_requires=['pytest>=2.2.3'],
                  entry_points={
                      'pytest11': ['neurotic = neurotic.report_plugin'],
