@@ -29,9 +29,12 @@ def _ctypes_inotify_configure():
     return inotify
 
 def _unpack_inotify_data(data):
-    wd, mask, cookie, _len = struct.unpack('iIII', data[:16])
-    fname = struct.unpack('%ds' % _len, data[16:])
-    return (wd, mask, cookie, fname)
+    try:
+        wd, mask, cookie, _len = struct.unpack('iIII', data[:16])
+        fname = struct.unpack('%ds' % _len, data[16:])
+        return (wd, mask, cookie, fname)
+    except Exception:
+        return None
 
 def start_monitor(dirs):
     inotify = _ctypes_inotify_configure()
@@ -56,6 +59,8 @@ def start_monitor(dirs):
         data = os.read(inotify_fd, 512)
         if data:
             info = _unpack_inotify_data(data)
+            if not info:
+                continue
             if (time.time() - last_run) < LIMIT:
                 continue
             if check_modifications(current_dir, paths):
