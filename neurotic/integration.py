@@ -74,7 +74,7 @@ def build_suite(test_labels):
             names.extend(build_app_suite(app))
 
     for name in names:
-        print name
+        print(name)
 
     import sys
     sys.exit(0)

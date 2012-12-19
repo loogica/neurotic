@@ -38,7 +38,7 @@ class TestReportRepository(object):
             reports[report['location'][0]].append(report)
 
         for location, reports in reports.items():
-            print "\n    " + location + "\n"
+            print("\n    " + location + "\n")
             for report in reports:
                 if outcome_type == "all":
                     yield report

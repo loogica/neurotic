@@ -5,6 +5,7 @@ import time
 import subprocess
 import glob
 import struct
+import six
 
 from ctypes.util import find_library
 from ctypes import *
@@ -13,6 +14,11 @@ from neurotic.async_runner import async_test, NeuroticError
 from neurotic.file_monitor import check_modifications
 
 LIMIT = 1
+
+_s = lambda x: x
+if six.PY3:
+    _s = lambda x: x.encode('utf-8')
+
 
 def _ctypes_inotify_configure():
     inotify = CDLL(find_library("c"), use_errno=True)
@@ -53,7 +59,7 @@ def start_monitor(dirs):
         dir_path = current_dir + '/' + dir_name
         paths.append(dir_path)
         path_inotify_fd = inotify.inotify_add_watch(inotify_fd,
-                                                    c_char_p(dir_path),
+                                                    c_char_p(_s(dir_path)),
                                                     c_uint(2))
     while True:
         data = os.read(inotify_fd, 512)
@@ -70,7 +76,7 @@ def start_monitor(dirs):
                     subprocess.Popen("neurotic")
                 except NeuroticError as ne:
                     os.system('clear')
-                    if "ERROR" in ne.content[0]:
+                    if b"ERROR" in ne.content[0]:
                         print(ne.content[0])
                     else:
                         subprocess.Popen("neurotic")
