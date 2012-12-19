@@ -14,7 +14,7 @@ $ python setup.py install
 $ pip install -r requirements.txt
 ```
 
-## Filosophy
+## Philosophy
 
 Software Testing should be AUTOMATIC.
 Test Results should be tracked for further analysis.
