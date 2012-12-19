@@ -26,7 +26,8 @@ def todict(obj, classkey=None):
         for k in obj.keys():
             obj[k] = todict(obj[k], classkey)
         return obj
-    elif hasattr(obj, "__iter__"):
+    elif hasattr(obj, "__iter__") and not isinstance(obj, tuple) \
+         and not isinstance(obj, str):
         return [todict(v, classkey) for v in obj]
     elif hasattr(obj, "__dict__"):
         data = dict([(key, todict(value, classkey))
