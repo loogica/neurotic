@@ -43,7 +43,7 @@ def start_monitor(dirs):
                     subprocess.Popen("neurotic")
                 except NeuroticError as ne:
                     os.system('clear')
-                    if "ERROR" in ne.content[0]:
+                    if b"ERROR" in ne.content[0]:
                         print(ne.content[0])
                     else:
                         subprocess.Popen("neurotic")
