@@ -66,7 +66,6 @@ def test_find_all_tests():
     sys.path.append(scenario2_path)
     os.environ['DJANGO_SETTINGS_MODULE'] = find_settings_module(scenario2_path)
     from django.conf import settings
-    import settings
     assert ["app1.tests.DummyTestCase.test_dummy"] == find_all_tests(find_apps(scenario2_path))
     sys.path.remove(scenario2_path)
     os.chdir(original_dir)
