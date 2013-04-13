@@ -37,11 +37,20 @@ def show_last_run():
                     print("%s" % line)
         else:
             print("%s %s" % (color(OK, color="green"),
-                              report['nodeid']))
+                             report['nodeid']))
 
-def list_tests(paths):
-    from neurotic.integration import build_suite
-    build_suite(paths)
+
+def django_list_tests(paths):
+    from neurotic.integration import (find_settings_module, find_all_tests,
+                                      find_apps)
+    sys.path.append(os.getcwd())
+    sys.path.append(os.path.dirname(os.getcwd()))
+    os.environ['DJANGO_SETTINGS_MODULE'] = find_settings_module(os.getcwd())
+    names = find_all_tests(find_apps(os.getcwd()))
+
+    for name in names:
+        print(name)
+
 
 def monitor(paths):
     from neurotic.file_monitor import start_monitor

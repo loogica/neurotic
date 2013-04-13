@@ -2,21 +2,51 @@ import os
 import sys
 import unittest
 
-sys.path.append(os.getcwd())
-os.environ['DJANGO_SETTINGS_MODULE'] = 'settings'
 
-from django.conf import settings
-from django.db.models.loading import get_apps, get_app
-from django.utils.importlib import import_module
-from django.utils.module_loading import module_has_submodule
+SANE_SETTINGS_PATTERNS = (
+    ('settings*', 'settings'),
+    ('*/settings*', 0),
+)
+
+SANE_APPS_PATTERNS = (
+    ('*/models*'),
+)
 
 TEST_MODULE = 'tests'
 
+
+def find_settings_module(path):
+    from glob import glob
+    os.chdir(path)
+    for pattern in SANE_SETTINGS_PATTERNS:
+        entries = glob(pattern[0])
+        if entries:
+            if pattern[1] == 0:
+                return entries[0].replace('.py', '').replace('/','.')
+            return pattern[1]
+    raise Exception("Django Settings not found - set DJANGO_SETTINGS_MODULE")
+
+
+def find_apps(path):
+    from glob import glob
+    os.chdir(path)
+    apps = set()
+    for pattern in SANE_APPS_PATTERNS:
+        entries = glob(pattern)
+        for entry in entries:
+            apps.add(entry.split('/')[0])
+    return list(apps)
+
+
 def get_tests(app_module):
+    from django.utils.importlib import import_module
+    from django.utils.module_loading import module_has_submodule
+
     parts = app_module.__name__.split('.')
     prefix, last = parts[:-1], parts[-1]
     try:
-        test_module = import_module('.'.join(prefix + [TEST_MODULE]))
+        test_module_name = '.'.join(prefix + [TEST_MODULE])
+        test_module = import_module(test_module_name)
     except ImportError:
         # Couldn't import tests.py. Was it due to a missing file, or
         # due to an import error in a tests.py that actually exists?
@@ -58,14 +88,17 @@ def build_app_suite(app_module):
     return names
 
 
-def build_suite(test_labels):
+def find_all_tests(test_labels):
+    from django.conf import settings
+    from django.db.models.loading import get_apps, get_app
+
     names = []
     suite = unittest.TestSuite()
 
     if test_labels:
         for label in test_labels:
             if '.' in label:
-                names.extend(uild_test(label))
+                names.extend(build_test(label))
             else:
                 app = get_app(label)
                 names.extend(build_app_suite(app))
@@ -73,8 +106,4 @@ def build_suite(test_labels):
         for app in get_apps():
             names.extend(build_app_suite(app))
 
-    for name in names:
-        print(name)
-
-    import sys
-    sys.exit(0)
+    return names
