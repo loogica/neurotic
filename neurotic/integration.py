@@ -89,7 +89,6 @@ def build_app_suite(app_module):
 
 
 def find_all_tests(test_labels):
-    from django.conf import settings
     from django.db.models.loading import get_apps, get_app
 
     names = []
@@ -103,7 +102,11 @@ def find_all_tests(test_labels):
                 app = get_app(label)
                 names.extend(build_app_suite(app))
     else:
-        for app in get_apps():
-            names.extend(build_app_suite(app))
+        try:
+            for app in get_apps():
+                names.extend(build_app_suite(app))
+        except ImportError as ie:
+            print(ie.message)
+            return []
 
     return names
