@@ -2,7 +2,8 @@ test:
 	py.test --verbose .
 
 coverage:
-	py.test --cov-report html --cov .
+	py.test --cov neurotic tests/
+	cd tests && coverage combine && coverage html && open htmlcov/index.html
 
 full:
 	make clean
