@@ -1,6 +1,5 @@
 import pytest
 
-
 def test_find_settings_module():
     from neurotic.integration import find_settings_module
     import os
@@ -39,33 +38,23 @@ def test_find_apps():
 
     # scenario 2 - app1/models/__init__.py
     scenario2_path = join(join(dirname(__file__), "fixtures"), "proj2")
-    assert ["app1"] == list(find_apps(scenario2_path))
+    assert ["app2"] == list(find_apps(scenario2_path))
 
     os.chdir(original_dir)
 
 
 def test_find_all_tests():
-    from neurotic.integration import find_apps, find_all_tests, find_settings_module
-    import os
-    import sys
-    from os.path import dirname, abspath, join
+    import subprocess
+    command = ["python", "t_find_all_isolated_proj1.py"]
+    assert "find_all_isolated_proj1 == OK\n" == subprocess.check_output(command)
 
-    original_dir = dirname(__file__)
+def test_find_all_tests2():
+    import subprocess
+    command = ["python", "t_find_all_isolated_proj2.py"]
+    assert "find_all_isolated_proj2 == OK\n" == subprocess.check_output(command)
 
-    # scenario 1 - app1/tests.py
-    scenario1_path = join(join(dirname(__file__), "fixtures"), "proj1")
-    sys.path.append(scenario1_path)
-    os.environ['DJANGO_SETTINGS_MODULE'] = find_settings_module(scenario1_path)
-    from django.conf import settings
-    assert ["app1.tests.DummyTestCase.test_dummy"] == find_all_tests(find_apps(scenario1_path))
-    sys.path.remove(scenario1_path)
-    os.chdir(original_dir)
-
-    # scenario 2 - app1/tests/__init__.py
-    scenario2_path = join(join(dirname(__file__), "fixtures"), "proj2")
-    sys.path.append(scenario2_path)
-    os.environ['DJANGO_SETTINGS_MODULE'] = find_settings_module(scenario2_path)
-    from django.conf import settings
-    assert ["app1.tests.DummyTestCase.test_dummy"] == find_all_tests(find_apps(scenario2_path))
-    sys.path.remove(scenario2_path)
-    os.chdir(original_dir)
+def test_find_all_tests3():
+    import subprocess
+    command = ["python", "t_find_all_isolated_proj3.py"]
+    assert "No module named app1\nfind_all_isolated_proj3 == OK\n" == \
+           subprocess.check_output(command)
