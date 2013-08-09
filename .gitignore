@@ -9,3 +9,6 @@ dist/
 testreportrepository/
 tests/htmlcov
 .coverage*
+coopy.*
+neurotic.egg*
+.DS_Store
