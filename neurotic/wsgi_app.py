@@ -35,13 +35,23 @@ def main():
         <div class="col-6 col-sm-6 col-lg-6">
           <pre id="editor" ng-show="show">{{ refined_error }}</pre>
         </div>
-        <div class="col-6 col-sm-6 col-lg-error">
-          <li ng-repeat="test in last_build().reports | filter:failed_filter">
-             <a href="#show-{{ test.id }}" ng-click="show_error(test)">
-               {{ test.outcome }} - {{ test.location[2]  }}
-             </a>
-             <br>
-          </li>
+        <div class="col-6 col-sm-6">
+          <div class="col-lg-error col-current">
+            <h1>Build {{ current_build.id }}</h1>
+            <li ng-repeat="test in current_build.reports | filter:failed_filter">
+               <a href="#show-{{ test.id }}" ng-click="show_error(test)"
+               ng-style="test.size">
+                 {{ test.outcome }} - {{ test.location[2]  }}
+               </a>
+            </li>
+          </div>
+          <div class="col-other">
+            <li ng-repeat="build in reports | filter:except_current">
+              <a href="#build-{{ build.id}}" ng-click="show_build(build)">
+                Build {{ build.id }}
+              </a>
+            </li>
+          </div>
         </div>
       </div>
     </div>

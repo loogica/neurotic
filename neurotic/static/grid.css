@@ -13,8 +13,17 @@ h4 {
   margin-top: 10px;
   margin-bottom: 0;
 }
-[class*="col-lg-error"] {
+
+[class*="col-current"] {
+  padding-left: 15px;
+}
+
+[class*="col-other"] {
   padding-top: 15px;
+  padding-left: 15px;
+}
+
+[class*="col-lg-error"] {
   padding-bottom: 15px;
   background-color: rgba(185,74,72,.15);
   border: 1px solid rgba(185,74,72,.2);
