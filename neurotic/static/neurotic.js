@@ -10,6 +10,12 @@ function NeuroticCtrl($scope, $http) {
 
   $scope.show_build = function(build) {
       $scope.current_build = build;
+      var errors = _.filter($scope.current_build.reports,
+                            $scope.failed_filter);
+      if (errors) {
+        $scope.current_item = errors[0];
+        $scope.show_error($scope.current_item);
+      }
   };
 
   $scope.failed_filter = function(obj) {
@@ -35,9 +41,20 @@ function NeuroticCtrl($scope, $http) {
   $scope.init();
 
   $scope.show_error = function(item) {
-    $scope.current_item.size = {'font-size': '14px'};
     var line_count = 0;
     var error_line = null;
+
+    if (!item) {
+        return;
+    }
+
+    if ($scope.current_item)
+        $scope.current_item.size = {'font-size': '14px'};
+
+    if (!item.longrepr) {
+        return;
+    }
+
     $scope.refined_error = _.reduce(item.longrepr.reprtraceback.reprentries[0].lines,
       function(a, b) {
         line_count++;
