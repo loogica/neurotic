@@ -26,7 +26,7 @@ def last_fails(paths):
     for failed in repository.last_run_failed_tests():
         print(failed)
 
-def show_last_run():
+def show_last_run(*args):
     for report in repository.last_run_report_type():
         if report['outcome'] == "failed":
             print("%s %s\n" % (color(ERROR, color="red"),
