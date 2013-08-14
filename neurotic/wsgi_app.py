@@ -2,10 +2,12 @@ import os
 
 from coopy.base import init_persistent_system
 from flask import Flask, jsonify, render_template
+from flask.json import JSONEncoder
 
 from neurotic.domain import TestReportRepository
 
 app = Flask(__name__)
+app.json_encoder_class = JSONEncoder
 
 repository = init_persistent_system(TestReportRepository,
                                     basedir="build_history")
