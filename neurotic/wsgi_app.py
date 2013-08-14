@@ -16,30 +16,37 @@ repository = init_persistent_system(TestReportRepository,
 def main():
     return '''
 <!doctype html>
-<html ng-app>
+<html ng-app="neurotic">
   <head>
     <link href="/static/bootstrap.min.css" rel="stylesheet">
     <link href="/static/grid.css" rel="stylesheet">
-    <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.0.6/angular.min.js"></script>
-    <script src="http://underscorejs.org/underscore-min.js"></script>
+    <script src="/static/moment.min.js"></script>
+    <script src="/static/angular.min.js"></script>
+    <script src="/static/underscore-min.js"></script>
     <script src="/static/ace/ace.js" type="text/javascript" charset="utf-8"></script>
     <script src="/static/neurotic.js"></script>
     <style type="text/css" media="screen">
+    body {
+        margin-top: 50px;
+    }
     #editor {
         height:500px;
+    }
+    span.build_when {
+        font-size: 16px;
     }
   </style>
   </head>
   <body ng-controller="NeuroticCtrl">
     <div class="container">
-      <h1>Last Build</h1>
       <div class="row">
         <div class="col-6 col-sm-6 col-lg-6">
           <pre id="editor" ng-show="show">{{ refined_error }}</pre>
         </div>
         <div class="col-6 col-sm-6">
           <div class="col-lg-error col-current">
-            <h1>Build {{ current_build.id }}</h1>
+            <h1>Build {{ current_build.id }} - <span class="build_when">{{ current_build.start.fromNow() }}
+                                               </span></h1>
             <li ng-repeat="test in current_build.reports | filter:failed_filter">
                <a href="#show-{{ test.id }}" ng-click="show_error(test)"
                ng-style="test.size">
@@ -50,7 +57,7 @@ def main():
           <div class="col-other">
             <li ng-repeat="build in reports | filter:except_current">
               <a href="#build-{{ build.id}}" ng-click="show_build(build)">
-                Build {{ build.id }}
+                Build {{ build.id }} - {{ current_build.start.fromNow() }}
               </a>
             </li>
           </div>

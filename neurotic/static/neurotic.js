@@ -1,4 +1,7 @@
-function NeuroticCtrl($scope, $http) {
+var app = angular.module('neurotic', []);
+
+app.controller('NeuroticCtrl', ['$scope', '$http',
+    function($scope, $http) {
   $scope.reports = [];
   $scope.show = false;
   $scope.current_build = null;
@@ -28,7 +31,10 @@ function NeuroticCtrl($scope, $http) {
 
   $scope.init = function() {
     $http.get("/reports").success(function(data) {
-        $scope.reports = data.reports;
+        $scope.reports = _.map(data.reports, function(el) {
+            el.start = moment(el.start);
+            return el;
+        });
         $scope.current_build = $scope.reports[$scope.reports.length - 1];
         var errors = _.filter($scope.current_build.reports,
                               $scope.failed_filter);
@@ -71,6 +77,4 @@ function NeuroticCtrl($scope, $http) {
     item.size = {'font-size': '20px'};
     $scope.current_item = item;
   };
-
-
-}
+}]);
