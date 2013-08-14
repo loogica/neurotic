@@ -1,5 +1,4 @@
 import json
-from datetime import datetime
 
 from coopy.decorators import readonly
 
@@ -12,6 +11,7 @@ class TestReportRepository(object):
 
     def add_report(self, report):
         self.report_counter += 1
+        report['when'] = self._clock.now()
         report['id'] = self.report_counter
         self.current_report()['reports'].append(report)
 
@@ -38,7 +38,6 @@ class TestReportRepository(object):
             reports[report['location'][0]].append(report)
 
         for location, reports in reports.items():
-            print("\n    " + location + "\n")
             for report in reports:
                 if outcome_type == "all":
                     yield report
@@ -60,8 +59,10 @@ class TestReportRepository(object):
 
     def start_run(self):
         self.run_counter += 1
+        start_run = self._clock.now()
         self.reports.append({'id': self.run_counter,
-                             'reports': []})
+                             'reports': [],
+                             'start': start_run})
 
     def finish_run(self):
-        pass
+        self.current_report()['finish'] = self._clock.now()
