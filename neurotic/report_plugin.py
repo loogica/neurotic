@@ -39,6 +39,21 @@ def todict(obj, classkey=None):
     else:
         return obj
 
+
+def parse_nodeid(nodeid):
+    blocks = nodeid.split('::')
+    module, test_case, func = None, None, None
+
+    if len(blocks) == 3:
+        module, test_case, func = blocks
+    elif len(blocks) == 2:
+        module, func = blocks
+    else:
+        raise Exception("Unknow nodeid format")
+
+    return dict(test_module=module, test_case=test_case, func=func)
+
+
 class NeuroticReporter(object):
     def __init__(self, config):
         self.config = config
