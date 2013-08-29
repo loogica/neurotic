@@ -1,5 +1,5 @@
 import unittest
-from neurotic.report_plugin import parse_nodeid
+from neurotic.report_plugin import parse_nodeid, extract_docstr
 
 def test_parse_pytest_nodeid_func():
     nodeid = 'tests/test_report_plugin.py::test_pytest_report_teststatus'
@@ -15,6 +15,29 @@ def test_parse_pytest_nodeid():
     assert 'tests/test_report_plugin.py' == blocks['test_module']
     assert 'DummyTestCase' == blocks['test_case']
     assert 'test_assert' == blocks['func']
+
+
+def test_check_func_docstring():
+    '''docstring value
+    '''
+
+    blocks = dict(test_module='tests/test_report_plugin.py',
+                  test_case=None,
+                  func='test_check_func_docstring')
+
+    assert dict(func_docstr='docstring value\n    ',
+                class_docstr=None) == extract_docstr(blocks)
+
+def test_check_class_docstring():
+    '''docstring value
+    '''
+
+    blocks = dict(test_module='tests/test_report_plugin.py',
+                  test_case='DummyTestCase',
+                  func='test_assert')
+
+    assert dict(func_docstr='docstring metodo\n    ',
+                class_docstr='Docstring de classe\n    ') == extract_docstr(blocks)
 
 def test_pytest_report_teststatus():
     assert 1 == 1

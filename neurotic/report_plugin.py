@@ -55,11 +55,31 @@ def parse_nodeid(nodeid):
     return dict(test_module=module, test_case=test_case, func=func)
 
 
+def extract_docstr(blocks):
+    custom_test_module_name = '_neurotic_temp'
+    _temp = imp.load_source(custom_test_module_name, blocks['test_module'])
+
+    test_case = blocks['test_case']
+    func = blocks['func']
+    docstrs = {}
+
+    if test_case:
+        docstrs['class_docstr'] = getattr(_temp, test_case).__doc__
+        docstrs['func_docstr'] = getattr(_temp, func).__doc__
+    else:
+        docstrs['class_docstr'] = None
+        docstrs['func_docstr'] = getattr(_temp, func).__doc__
+
+    return docstrs
+
+
 class NeuroticReporter(object):
     def __init__(self, config):
         self.config = config
 
     def pytest_report_teststatus(self, report):
+        blocks = parse_nodeid(report.nodeid)
+        docstr = extract_docstr(blocks)
         if report.when == "call":
             report_copy = deepcopy(report)
             repository.add_report(todict(report_copy))
