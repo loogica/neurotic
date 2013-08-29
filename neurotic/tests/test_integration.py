@@ -1,3 +1,4 @@
+import os
 import sys
 import pytest
 
@@ -45,24 +46,41 @@ def test_find_apps():
 
 
 def test_find_all_tests():
+    from os import environ
+    env = environ.copy()
+    home_path = os.getcwd() + '/../../'
+    env['PYTHONPATH'] = home_path
+
     coverage = '--cov' in sys.argv
     import subprocess
     if not coverage:
         command = [sys.executable, "t_find_all_isolated_proj1.py"]
     else:
         command = ["coverage", "run", "t_find_all_isolated_proj1.py"]
-    assert "find_all_isolated_proj1 == OK\n" == subprocess.check_output(command)
+    assert "find_all_isolated_proj1 == OK\n" == subprocess.check_output(command,
+        env=env)
 
 def test_find_all_tests2():
+    from os import environ
+    env = environ.copy()
+    home_path = os.getcwd() + '/../../'
+    env['PYTHONPATH'] = home_path
+
     coverage = '--cov' in sys.argv
     import subprocess
     if not coverage:
         command = [sys.executable, "t_find_all_isolated_proj2.py"]
     else:
         command = ["coverage", "run", "t_find_all_isolated_proj2.py"]
-    assert "find_all_isolated_proj2 == OK\n" == subprocess.check_output(command)
+    assert "find_all_isolated_proj2 == OK\n" == subprocess.check_output(command,
+        env=env)
 
 def test_find_all_tests3():
+    from os import environ
+    env = environ.copy()
+    home_path = os.getcwd() + '/../../'
+    env['PYTHONPATH'] = home_path
+
     coverage = '--cov' in sys.argv
     import subprocess
     if not coverage:
@@ -70,4 +88,4 @@ def test_find_all_tests3():
     else:
         command = ["coverage", "run", "t_find_all_isolated_proj3.py"]
     assert "No module named app1\nfind_all_isolated_proj3 == OK\n" == \
-           subprocess.check_output(command)
+           subprocess.check_output(command, env=env)
