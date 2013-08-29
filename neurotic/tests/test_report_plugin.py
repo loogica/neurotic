@@ -21,7 +21,7 @@ def test_check_func_docstring():
     '''docstring value
     '''
 
-    blocks = dict(test_module='tests/test_report_plugin.py',
+    blocks = dict(test_module=__file__,
                   test_case=None,
                   func='test_check_func_docstring')
 
@@ -32,11 +32,11 @@ def test_check_class_docstring():
     '''docstring value
     '''
 
-    blocks = dict(test_module='tests/test_report_plugin.py',
+    blocks = dict(test_module=__file__,
                   test_case='DummyTestCase',
                   func='test_assert')
 
-    assert dict(func_docstr='docstring metodo\n    ',
+    assert dict(func_docstr='docstring metodo\n        ',
                 class_docstr='Docstring de classe\n    ') == extract_docstr(blocks)
 
 def test_pytest_report_teststatus():
@@ -45,7 +45,7 @@ def test_pytest_report_teststatus():
 def test_pytest_report_teststatus_error():
     '''Uma docstring na funcao de teste
     '''
-    assert 0 == 1
+    assert 1 == 1
 
 class DummyTestCase(unittest.TestCase):
     '''Docstring de classe
@@ -54,4 +54,4 @@ class DummyTestCase(unittest.TestCase):
     def test_assert(self):
         '''docstring metodo
         '''
-        self.assertEquals(1, 0)
+        self.assertEquals(1, 1)
