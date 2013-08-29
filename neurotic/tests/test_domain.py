@@ -30,7 +30,7 @@ def test_test_report_start_run():
     assert repository.reports == [{'id': 1, 'reports': [],
                                    'start': generic_date}]
     assert repository.report_counter == 0
-    assert repository.run_counter == 0
+    assert repository.run_counter == 1
     assert repository.last_run == 0
 
 def test_test_report_repository_add_report():
