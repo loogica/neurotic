@@ -65,7 +65,7 @@ def extract_docstr(blocks):
 
     if test_case:
         docstrs['class_docstr'] = getattr(_temp, test_case).__doc__
-        docstrs['func_docstr'] = getattr(_temp, func).__doc__
+        docstrs['func_docstr'] = getattr(getattr(_temp, test_case), func).__doc__
     else:
         docstrs['class_docstr'] = None
         docstrs['func_docstr'] = getattr(_temp, func).__doc__
@@ -82,7 +82,9 @@ class NeuroticReporter(object):
         docstr = extract_docstr(blocks)
         if report.when == "call":
             report_copy = deepcopy(report)
-            repository.add_report(todict(report_copy))
+            report_dict = todict(report_copy)
+            report_dict['docstring'] = docstr
+            repository.add_report(report_dict)
 
     def pytest_report_header(config):
         repository.start_run()
